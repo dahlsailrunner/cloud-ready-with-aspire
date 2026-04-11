@@ -17,10 +17,12 @@ var mailpit = builder.AddMailPit("smtp")
 
 var mcp = builder.AddProject<CarvedRock_Mcp>("mcp")
     .WithUrlForEndpoint("https", u => u.DisplayLocation = UrlDisplayLocation.DetailsOnly)
+    .WaitFor(api)
     .WithReference(api);
 
 var agent = builder.AddProject<CarvedRock_Agent>("agent")
     .WithUrlForEndpoint("https", u => u.DisplayText = "Agent Swagger")
+    .WaitFor(api)
     .WithReference(mcp);
 
 builder.AddProject<CarvedRock_WebApp>("webapp")
