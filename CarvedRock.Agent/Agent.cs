@@ -8,18 +8,20 @@ using System.Text;
 
 namespace CarvedRock.Agent;
 
-public class Agent(IChatClient chatClient, 
-            IConfiguration config, 
+public class Agent(IChatClient chatClient,
+            IConfiguration config,
+            ILogger<Agent> logger,
             IHttpContextAccessor httpCtxAccessor)
 {
     public async IAsyncEnumerable<string> GetAgentResponse(string message,
         [EnumeratorCancellation] CancellationToken cxl)
     {
+        logger.LogInformation("Got into the Agent method.");
         var mcpClient = await McpClientHelper.GetMcpClient(config, httpCtxAccessor, cxl);
 
         var tools = await mcpClient.ListToolsAsync(cancellationToken: cxl);
 
-        var prompt = await GetPromptAsync(message, mcpClient, 
+        var prompt = await GetPromptAsync(message, mcpClient,
             httpCtxAccessor.HttpContext?.User, cxl);
 
         var agent = chatClient.AsAIAgent(
@@ -36,7 +38,7 @@ public class Agent(IChatClient chatClient,
         }
     }
 
-    private async Task<string> GetPromptAsync(string message, McpClient mcpClient,
+    private static async Task<string> GetPromptAsync(string message, McpClient mcpClient,
                                     ClaimsPrincipal? user, CancellationToken cxl)
     {
         if (message.StartsWith("/admin", StringComparison.InvariantCultureIgnoreCase) &&

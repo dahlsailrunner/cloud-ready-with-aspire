@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ModelContextProtocol.AspNetCore.Authentication;
 using ModelContextProtocol.Authentication;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,31 +23,40 @@ builder.Services.AddCors(options => // cors is required for mcp inspector with o
        .AllowAnyHeader());
 });
 
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultChallengeScheme = McpAuthenticationDefaults.AuthenticationScheme;
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-        .AddJwtBearer(options =>
+.AddJwtBearer(options =>
+{
+    options.Authority = authServer;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = authServer,
+        ValidAudience = "api",
+        NameClaimType = "email",
+    };
+    options.Events = new JwtBearerEvents
+    {
+        OnAuthenticationFailed = context =>
         {
-            options.Authority = authServer;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                ValidAudience = mcpServerUrl,
-                ValidIssuer = authServer,
-                NameClaimType = ClaimTypes.Email
-            };
-        })
-        .AddMcp(options =>
-        {
-            options.ResourceMetadata = new ProtectedResourceMetadata
-            {
-                Resource = "api", // mcpServerUrl,                
-                AuthorizationServers = { authServer },
-                ScopesSupported = ["api", "openid", "profile", "email", "offline_access"],
-            };
-        });
+            // context.Exception.Message is the validation failure
+            return Task.CompletedTask;
+        },
+    };
+})
+.AddMcp(options =>
+{
+    options.ResourceMetadata = new ProtectedResourceMetadata
+    {
+        Resource = "api",
+        AuthorizationServers = { authServer },
+        ScopesSupported = ["api"],
+    };
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddTransient<IClaimsTransformation, AdminClaimsTransformation>();

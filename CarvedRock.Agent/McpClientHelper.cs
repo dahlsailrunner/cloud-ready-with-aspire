@@ -1,6 +1,4 @@
-﻿using IdentityModel;
-using IdentityModel.Client;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ModelContextProtocol.Client;
 
 namespace CarvedRock.Agent;
@@ -16,12 +14,12 @@ public static class McpClientHelper
         if (httpCtx == null || httpCtx.User.Identity == null || !httpCtx.User.Identity.IsAuthenticated)
         {
             // anonymous user
-            return await McpClientHelper.GetAnonymousClient(config, cxl);
+            return await GetAnonymousClient(config, cxl);
         }
         else
         {
             // authenticated user
-            return await McpClientHelper.GetTokenForwardingClient(httpCtxAccessor, config, cxl);
+            return await GetTokenForwardingClient(httpCtxAccessor, config, cxl);
         }
     }
 
@@ -69,35 +67,36 @@ public static class McpClientHelper
             //https://docs.duendesoftware.com/identityserver/tokens/extension-grants/#token-exchange
             var accessToken = authHeader.Replace($"{JwtBearerDefaults.AuthenticationScheme} ", "",
                                     StringComparison.OrdinalIgnoreCase).Trim();
-            var newAccessToken = await GetDelegatedAccessTokenAsync(accessToken);
-            return $"{JwtBearerDefaults.AuthenticationScheme} {newAccessToken}";
+            //var newAccessToken = await GetDelegatedAccessTokenAsync(accessToken);
+            return $"{JwtBearerDefaults.AuthenticationScheme} {accessToken}";
         }
 
         throw new Exception("Http Context does not have a bearer token.");
     }
 
-    private static async Task<string> GetDelegatedAccessTokenAsync(string accessToken)
-    {
+    // TOKEN EXCHANGE example
+    // private static async Task<string> GetDelegatedAccessTokenAsync(string accessToken)
+    // {
 
-        var idSrvUrl = "https://localhost:5001/"; // TODO: Get from config
-        var client = new HttpClient() { BaseAddress = new Uri(idSrvUrl) };
+    //     var idSrvUrl = "https://localhost:5001/"; // TODO: Get from config
+    //     var client = new HttpClient() { BaseAddress = new Uri(idSrvUrl) };
 
-        var response = await client.RequestTokenExchangeTokenAsync(new TokenExchangeTokenRequest
-        {
-            Address = "connect/token",
-            ClientId = "ai.agent",
-            ClientSecret = "secret",
+    //     var response = await client.RequestTokenExchangeTokenAsync(new TokenExchangeTokenRequest
+    //     {
+    //         Address = "connect/token",
+    //         ClientId = "ai.agent",
+    //         ClientSecret = "secret",
 
-            SubjectToken = accessToken,
-            SubjectTokenType = OidcConstants.TokenTypeIdentifiers.AccessToken,
-            Scope = "api email",
+    //         SubjectToken = accessToken,
+    //         SubjectTokenType = OidcConstants.TokenTypeIdentifiers.AccessToken,
+    //         Scope = "api email",
 
-            Parameters =
-            {
-                { "exchange_style", "delegation" }
-            }
-        });
+    //         Parameters =
+    //         {
+    //             { "exchange_style", "delegation" }
+    //         }
+    //     });
 
-        return response.AccessToken!;
-    }
+    //     return response.AccessToken!;
+    // }
 }
