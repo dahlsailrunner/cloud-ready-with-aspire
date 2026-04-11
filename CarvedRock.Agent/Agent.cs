@@ -29,10 +29,9 @@ public class Agent(IChatClient chatClient,
             name: "CarvedRock Assistant",
             tools: [.. tools]);
 
-        await foreach (var update in agent.RunStreamingAsync(
-            //"I've got a hike coming up on a mostly-paved path.  Can you give me some product recommendations?", 
-            message,
-            cancellationToken: cxl))
+        // give some product recommendations for a mountain hike?
+        await foreach (var update in
+                    agent.RunStreamingAsync(message, cancellationToken: cxl))
         {
             yield return update.ToString();
         }

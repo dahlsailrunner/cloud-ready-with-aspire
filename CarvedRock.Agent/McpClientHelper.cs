@@ -64,7 +64,7 @@ public static class McpClientHelper
             authHeader.StartsWith($"{JwtBearerDefaults.AuthenticationScheme} ",
                     StringComparison.OrdinalIgnoreCase))
         {
-            //https://docs.duendesoftware.com/identityserver/tokens/extension-grants/#token-exchange
+            
             var accessToken = authHeader.Replace($"{JwtBearerDefaults.AuthenticationScheme} ", "",
                                     StringComparison.OrdinalIgnoreCase).Trim();
             //var newAccessToken = await GetDelegatedAccessTokenAsync(accessToken);
@@ -75,6 +75,7 @@ public static class McpClientHelper
     }
 
     // TOKEN EXCHANGE example
+    //https://docs.duendesoftware.com/identityserver/tokens/extension-grants/#token-exchange
     // private static async Task<string> GetDelegatedAccessTokenAsync(string accessToken)
     // {
 
