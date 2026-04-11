@@ -43,7 +43,7 @@ public partial class ListingModel(IProductService productService,
         else // anonymous
         {
             client = httpClientFactory.CreateClient();
-            client.BaseAddress = new("https://api");
+            client.BaseAddress = new("https://agent");
         }
 
 

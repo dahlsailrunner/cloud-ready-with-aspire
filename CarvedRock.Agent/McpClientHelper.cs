@@ -3,7 +3,7 @@ using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ModelContextProtocol.Client;
 
-namespace CarvedRock.Api;
+namespace CarvedRock.Agent;
 
 public static class McpClientHelper
 {

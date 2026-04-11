@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace CarvedRock.Api;
+namespace CarvedRock.Core;
 
 public class SwaggerOptions(IConfiguration config) : IConfigureOptions<SwaggerGenOptions>
 {

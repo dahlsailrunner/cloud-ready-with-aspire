@@ -18,34 +18,14 @@ builder.Services.AddValidatorsFromAssemblyContaining<NewProductValidator>();
 builder.Services.AddProblemDetails(opts => opts.CustomizeProblemDetails = CustomizeProblemDetails);
 builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
 
-// package: Aspire.Azure.AI.OpenAI
-// builder.AddAzureOpenAIClient("kyt-AzureOpenAI", configureSettings: settings =>
-// {
-//     settings.EnableSensitiveTelemetryData = true;
-//     settings.Endpoint = new Uri(builder.Configuration.GetValue<string>("AIConnection:Endpoint")!);
-//     settings.Key = builder.Configuration.GetValue<string>("AIConnection:Key")!;
-// }).AddChatClient(builder.Configuration.GetValue<string>("AIConnection:Deployment")!);
-
-// package: Aspire.OpenAI
-// Then add your API key for OpenAI to user secrets for the AIConnection:OpenAIKey value
-builder.AddOpenAIClient("kyt-OpenAI", configureSettings: settings =>
-{
-    settings.EnableSensitiveTelemetryData = true;
-    settings.Key = builder.Configuration.GetValue<string>("AIConnection:OpenAIKey");
-}).AddChatClient(builder.Configuration.GetValue<string>("AIConnection:OpenAIModel"));
-
-builder.Services.AddHttpContextAccessor();
-
-var authority = builder.Configuration.GetValue<string>("Auth:Authority");
 JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
-        options.Authority = authority;
+        options.Authority = builder.Configuration.GetValue<string>("Auth:Authority"); ;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             NameClaimType = "email",
-            //RoleClaimType = "role",
             ValidateAudience = false
         };
     });
@@ -68,6 +48,7 @@ builder.AddNpgsqlDbContext<LocalContext>("CarvedRockPostgres"); // aspire integr
 builder.Services.AddScoped<ICarvedRockRepository, CarvedRockRepository>();
 
 var app = builder.Build();
+
 app.MapDefaultEndpoints();
 app.UseExceptionHandler();
 
@@ -107,6 +88,3 @@ static void CustomizeProblemDetails(ProblemDetailsContext context)
     context.ProblemDetails.Detail = "Provide the instance value when contacting us for support";
     context.ProblemDetails.Instance = Activity.Current?.RootId;
 }
-
-record AIConnection(string Endpoint, string Key, string Deployment);
-

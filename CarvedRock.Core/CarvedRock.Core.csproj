@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="IdentityModel" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />        
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" /> 
   </ItemGroup>
 
 </Project>

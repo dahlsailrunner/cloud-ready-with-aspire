@@ -50,7 +50,7 @@ builder.Services.AddHttpClient<IProductService, ProductService>();
 
 builder.Services.AddOpenIdConnectAccessTokenManagement();
 builder.Services.AddUserAccessTokenHttpClient("AI", 
-       configureClient: client => client.BaseAddress = new("https://api"));
+       configureClient: client => client.BaseAddress = new("https://agent"));
 
 builder.AddMailKitClient("smtp");
 builder.Services.AddScoped<IEmailSender, EmailService>();
@@ -59,10 +59,7 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-//if (!app.Environment.IsDevelopment())
-//{
 app.UseExceptionHandler("/Error");
-//}
 
 app.UseStaticFiles();
 

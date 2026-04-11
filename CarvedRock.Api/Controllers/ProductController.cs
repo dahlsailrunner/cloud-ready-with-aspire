@@ -16,18 +16,6 @@ public partial class ProductController(IProductLogic productLogic,
     [AllowAnonymous]
     public async Task<IEnumerable<Product>> Get(string category = "all")
     {
-        // NOTE: Don't do this!  It's not needed and adds confusion.
-        // try
-        // {
-        //     var response = await productLogic.GetProductsForCategoryAsync(category);
-        //     return response;
-        // }
-        // catch (Exception ex)
-        // {
-        //     var baseMsg = ex.GetBaseException().Message;
-        //     throw new Exception($"Error when calling GetProductForCategory: {baseMsg}", ex);
-        // }
-
         logger.LogInformation("Calling product logic.");
         return await productLogic.GetProductsForCategoryAsync(category);
     }
