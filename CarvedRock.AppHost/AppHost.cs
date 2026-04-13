@@ -20,8 +20,14 @@ var mcp = builder.AddProject<CarvedRock_Mcp>("mcp")
     .WaitFor(api)
     .WithReference(api);
 
+var openAiKeyParam = builder.AddParameter("openaiKey", secret: true)
+    .WithDescription("OpenAI API Key.  Get one from [OpenAI](https://platform.openai.com). Note " +
+     "that without this set, all features except the AI chat and the Agent API will still work fine.",
+                enableMarkdown: true);
+
 var agent = builder.AddProject<CarvedRock_Agent>("agent")
     .WithUrlForEndpoint("https", u => u.DisplayText = "Agent Swagger")
+    .WithEnvironment("AIConnection__OpenAIKey", openAiKeyParam)
     .WaitFor(api)
     .WithReference(mcp);
 
