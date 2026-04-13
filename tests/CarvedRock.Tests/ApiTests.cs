@@ -2,32 +2,24 @@ using System.Net.Http.Json;
 
 namespace CarvedRock.Tests;
 
-public class ApiTests
+[Collection("Integration test collection")]
+public class ApiTests(AppFixture fixture) 
 {
-    private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
-
     [Fact]
     public async Task GetAllProductsReturnsAllProducts()
     {
-        // Arrange
-        var cancellationToken = CancellationToken.None;
-        var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.CarvedRock_AppHost>(cancellationToken);
-
-        appHost.Services.ConfigureHttpClientDefaults(clientBuilder =>
-        {
-            clientBuilder.AddStandardResilienceHandler();
-        });
-
-        await using var app = await appHost.BuildAsync(cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
-        await app.StartAsync(cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
-
         // Act
-        using var httpClient = app.CreateHttpClient("api");
-        await app.ResourceNotifications.WaitForResourceHealthyAsync("api", cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
+        using var httpClient = fixture.App.CreateHttpClient("api");
 
-        var response = await httpClient.GetFromJsonAsync<List<ProductModel>>("/product", cancellationToken);
+        var response = await httpClient.GetFromJsonAsync<List<ProductModel>>("/product",
+                    TestContext.Current.CancellationToken);
 
         // Assert
-        Assert.Equal(50, response?.Count);
+        var productNames = response!.Select(p => p.Name).ToList();
+        Assert.Contains("Alpine Trekker", productNames); // first one in SeedData.json
+        Assert.Contains("Trail Running Hybrid Boot", productNames); // last one
+
+        // might not be correct based on timing of delete or add operations
+        // Assert.Equal(50, response?.Count); 
     }
 }

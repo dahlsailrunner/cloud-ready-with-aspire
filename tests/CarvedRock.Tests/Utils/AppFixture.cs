@@ -22,7 +22,7 @@ public class AppFixture : IDisposable
     private async Task InitializeAsync()
     {
         // takes longer than the xunit default timeout to spin up resources
-        var cancellationToken = new CancellationTokenSource(_defaultTimeout).Token;                 
+        var cancellationToken = new CancellationTokenSource(_defaultTimeout).Token;
         var appHost = await DistributedApplicationTestingBuilder.CreateAsync<Projects.CarvedRock_AppHost>(cancellationToken);
 
         appHost.Services.ConfigureHttpClientDefaults(clientBuilder =>
@@ -32,6 +32,11 @@ public class AppFixture : IDisposable
 
         App = await appHost.BuildAsync(cancellationToken).WaitAsync(_defaultTimeout, cancellationToken);
         await App.StartAsync(cancellationToken).WaitAsync(_defaultTimeout, cancellationToken);
+
+        // waiting for the webapp means that everything else should be running
+        await App.ResourceNotifications
+            .WaitForResourceHealthyAsync("webapp", TestContext.Current.CancellationToken)
+            .WaitAsync(_defaultTimeout, TestContext.Current.CancellationToken);
     }
 
     public async Task<McpClient> GetMcpClient(string? user = null, string? pwd = null, CancellationToken cancelToken = default)
@@ -65,7 +70,15 @@ public class AppFixture : IDisposable
     }
 
     public void Dispose()
-    {    
+    {
         GC.SuppressFinalize(this);
     }
+}
+
+[CollectionDefinition("Integration test collection")]
+public class IntegrationCollection : ICollectionFixture<AppFixture>
+{
+    // This class has no code, and is never created. Its purpose is simply
+    // to be the place to apply [CollectionDefinition] and all the
+    // ICollectionFixture<> interfaces.
 }

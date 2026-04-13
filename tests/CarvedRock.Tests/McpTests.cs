@@ -4,7 +4,8 @@ using ModelContextProtocol.Protocol;
 
 namespace CarvedRock.Tests;
 
-public class McpServerTests(AppFixture fixture) : IClassFixture<AppFixture>
+[Collection("Integration test collection")]
+public class McpServerTests(AppFixture fixture)
 {
     [Theory]
     [InlineData("m2m", "secret")] // non-admin
