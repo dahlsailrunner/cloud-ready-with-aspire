@@ -104,6 +104,9 @@ in the MCP Inspector to get authentication working from it.
 
 ## AI Setup Notes
 
+***T I P :*** Just run the application, and follow the instructions for
+setting the missing parameter!  :)
+
 You also need to provide your own AI service if you want
 this app to be fully functional with a chat interface that uses the
 MCP server.
@@ -112,7 +115,6 @@ To replicate what I have done:
 
 * Go to <https://platform.openai.com> (you'll need a login / account here)
 * Create an API key
-* Create (or find) a deployment of a model (like `gpt-4o-mini`)
 
 Add the API key to the user secrets - this can be done by setting the
 parameter in the Aspire dashboard the first time you run the project.  
