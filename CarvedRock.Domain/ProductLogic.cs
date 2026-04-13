@@ -18,8 +18,7 @@ public class ProductLogic(ICarvedRockRepository repo,
         using var scope = logger.BeginScope(
             new Dictionary<string, object> { ["category"] = category });
 
-        FastLog.CallingRepository(logger); // high-performance situations
-        //logger.LogInformation("Calling repository.");
+        logger.LogInformation("Calling repository.");
         return await repo.GetProductsAsync(category);
     }
 
@@ -35,7 +34,7 @@ public class ProductLogic(ICarvedRockRepository repo,
         //var activitySource = new ActivitySource("CarvedRock.Inventory");
         using (var activity = activitySource.StartActivity("INVENTORY SingleProduct"))
         {
-            activity?.SetTag("product", id.ToString());                                    
+            activity?.SetTag("product", id.ToString());
             await Task.Delay(250); // quarter of a second -- do some logic that's interesting
         } // activity will stop when using statement completes
 

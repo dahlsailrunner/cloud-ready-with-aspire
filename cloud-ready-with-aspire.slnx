@@ -5,6 +5,9 @@
     <File Path="Directory.Packages.props" />
     <File Path="readme.md" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CarvedRock.Tests/CarvedRock.Tests.csproj" />
+  </Folder>
   <Project Path="CarvedRock.Agent/CarvedRock.Agent.csproj" />
   <Project Path="CarvedRock.Api/CarvedRock.Api.csproj" />
   <Project Path="CarvedRock.AppHost/CarvedRock.AppHost.csproj" />
