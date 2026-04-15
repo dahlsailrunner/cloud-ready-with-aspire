@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="Aspire.AppHost.Sdk" Version="13.2.1" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="13.2.2" />
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -14,7 +14,6 @@
     <PackageReference Include="Aspire.Hosting.PostgreSQL" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.MailPit" />
     <PackageReference Include="CommunityToolkit.Aspire.Hosting.McpInspector" />
-    <PackageReference Include="CommunityToolkit.Aspire.Hosting.OpenTelemetryCollector" />
   </ItemGroup>
 
   <ItemGroup>
